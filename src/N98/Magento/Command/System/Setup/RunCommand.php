@@ -5,6 +5,8 @@ namespace N98\Magento\Command\System\Setup;
 use N98\Magento\Command\AbstractMagentoCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use N98\Magento\Command\Cache\ClearCommand as ClearCacheCommand;
+use Symfony\Component\Console\Output\NullOutput;
 
 class RunCommand extends AbstractMagentoCommand
 {
@@ -26,6 +28,9 @@ class RunCommand extends AbstractMagentoCommand
     {
         $this->detectMagento($output);
         if ($this->initMagento()) {
+            $this->getApplication()->get('cache:clear')->run($input, new NullOutput());
+            $output->writeln('<info>Cleared cache</info>');
+
             \Mage_Core_Model_Resource_Setup::applyAllUpdates();
             if (is_callable(array('\Mage_Core_Model_Resource_Setup', 'applyAllDataUpdates'))) {
                 \Mage_Core_Model_Resource_Setup::applyAllDataUpdates();
