@@ -13,7 +13,7 @@ class FlushCommand extends AbstractCacheCommand
     {
         $this
             ->setName('cache:flush')
-            ->setAliases(array('cache:clear'))
+            ->setAliases(array('cache:clear', 'cache'))
             ->addDeprecatedAlias('cache:clear', 'Please use cache:flush')
             ->setDescription('Flush magento cache storage')
         ;
