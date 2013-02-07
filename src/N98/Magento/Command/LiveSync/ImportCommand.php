@@ -45,6 +45,6 @@ class ImportCommand extends AbstractMagentoCommand
             throw new \Exception("Looks like you haven't installed the KJ_LiveSync module yet. \r\nIt needs to be installed in both the target and source Magento instances.");
         }
 
-        return Mage::getModel('livesync/import');
+        return \Mage::getModel('livesync/import');
    }
 }
