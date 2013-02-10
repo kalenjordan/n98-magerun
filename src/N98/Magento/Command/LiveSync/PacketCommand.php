@@ -11,18 +11,21 @@ use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\NullOutput;
 
-class ImportCommand extends AbstractLiveSyncCommand
+class PacketCommand extends AbstractLiveSyncCommand
 {
     /** @var InputInterface */
     protected $_input;
 
+    /** @var OutputInterface */
+    protected $_output;
+
     protected function configure()
     {
         $this
-            ->setName('livesync:import')
+            ->setName('livesync:packet')
             ->addOption('filter', null, InputOption::VALUE_OPTIONAL, "A filter to only process packets that match")
-            ->addArgument('source', InputArgument::REQUIRED, "The source magento instance to import from")
-            ->setDescription('Imports packets from a Magento instance using KJ_LiveSync module')
+            ->addArgument('source', InputArgument::OPTIONAL, "The source magento instance to pull packets from")
+            ->setDescription('Lists out packets for debugging')
         ;
     }
 
@@ -34,11 +37,10 @@ class ImportCommand extends AbstractLiveSyncCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->_input = $input;
+        $this->_output = $output;
 
         $this->detectMagento($output);
         $this->initMagento();
-
-        $output->writeln("<info>Running LiveSync import</info>");
 
         $import = $this->getImportModel()
             ->setMagentoSource($this->_getSourceArgument());
@@ -48,23 +50,26 @@ class ImportCommand extends AbstractLiveSyncCommand
                 continue;
             }
 
-            $output->writeln("<info>Processing $file");
-            $import->processPacket($file);
+            $output->writeln("<info>$file</info>");
+            $this->_outputPacket($file);
         }
     }
 
-    protected function initMagento()
+    protected function _outputPacket($file)
     {
-        if ($this->_magentoRootFolder !== null) {
-            if ($this->_magentoMajorVersion == self::MAGENTO_MAJOR_VERSION_2) {
-                require_once $this->_magentoRootFolder . '/app/bootstrap.php';
-            } else {
-                require_once $this->_magentoRootFolder . '/app/Mage.php';
-            }
-            \Mage::app('', 'store');
-            return true;
+        $json = file_get_contents($file);
+        $pretty = \Zend_Json::prettyPrint($json);
+
+        $this->_output->writeln($pretty);
+    }
+
+    protected function _getSourceArgument()
+    {
+        $source = parent::_getSourceArgument();
+        if (!$source) {
+            $source = $this->_magentoRootFolder;
         }
 
-        return false;
+        return $source;
     }
 }

@@ -28,6 +28,7 @@ use N98\Magento\Command\Admin\User\CreateUserCommand as AdminUserCreateCommand;
 use N98\Magento\Command\Admin\DisableNotificationsCommand;
 use N98\Magento\Command\Installer\InstallCommand;
 use N98\Magento\Command\LiveSync\ImportCommand as LiveSyncImportCommand;
+use N98\Magento\Command\LiveSync\PacketCommand as LiveSyncPacketCommand;
 use N98\Magento\Command\System\MaintenanceCommand as SystemMaintenanceCommand;
 use N98\Magento\Command\System\InfoCommand as SystemInfoCommand;
 use N98\Magento\Command\System\CheckCommand as SystemCheckCommand;
@@ -132,6 +133,7 @@ class Application extends BaseApplication
         $this->add(new DesignDemoNoticeCommand());
         $this->add(new InstallCommand());
         $this->add(new LiveSyncImportCommand());
+        $this->add(new LiveSyncPacketCommand());
         $this->add(new SystemMaintenanceCommand());
         $this->add(new SystemInfoCommand());
         $this->add(new SystemCheckCommand());
